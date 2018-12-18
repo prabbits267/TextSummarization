@@ -65,11 +65,32 @@ class DataPreprocess:
         para = re.sub('\w+\.twitter.com/\w+', 'URL', para)
         para = re.sub('\{"@context.*}}', '', para)
         para = re.sub("([a-zA-Z]+)?\*+([a-zA-Z])?", 'F-WORD', para)
-        para = re.sub("\d+", 'NUM', para)
         para = re.sub('fakenote_boxwrap.*differenceNUM\.', '', para)
-        para = re.sub('\?|"|\.{2,}', "", para)
+        para = re.sub('\?|"|\.{2,}', " ", para)
 
         return para
+
+    # adding white space to paragraph ago.Sources ==> ago. Sources
+    def adding_wspace(self, para):
+        fiall = re.findall('[a-zA-Z]+\.\[a-zA-Z]+', para)
+        if fiall:
+            for fi in fiall:
+                ind = para.index(fi)
+                stop_ind = fi.index('.') + 1
+                ind += stop_ind
+                para = para[:ind] + ' ' + para[ind:]
+        return para
+
+    def write_csv_file(self):
+        cont_summr = list()
+        for i, cont in enumerate(self.content):
+            if cont and self.summary[i]:
+                cont = self.preprocess_paragraph(cont)
+                sum = self.preprocess_paragraph(self.summary[i])
+                cont_summr.append((sum, cont))
+        dframe = pd.DataFrame(cont_summr)
+        dframe.to_csv(dframe, encoding='utf-8', sep='\t')
+
 
     # write processed content summary (word_count) into file
     def process_content_sumamry(self):
@@ -95,19 +116,5 @@ class DataPreprocess:
                 tokens[i] = dot_token
         return tokens
 
-
-# pre = DataPreprocess()
-
-para = '''
-our-day leave of absence.Earlier, Bihar health minister Mangal Pandey had ended up redefining the very meaning of virginity in his attempts to justify the awkward phrasing of the question in the form. Following a public furore over the document on DAYOFWEEK, the minister told news channels that there was nothing wrong with using the word virgin because it
- simply meant kanya or kunwari  which means an unmarried girl.Pandey had joined the cabinet just three days ago.Sources said the chief ministers office had also taken cognizance of the issue, and asked for a copy of the form. It had even asked why the question was introduced in the first place.In its response, the management of the autonomous super-specialty health facility had clarified on DAYOFWEEK that it was in adherence to the central civil services rules followed by the All India Institute of Medical Sciences in New Delhi.The previous version of the marital declaration form, which purportedly asked new recruits if they were virgins.
-'''
-fiall = re.findall('\w+\.\w+', para)
-for fi in fiall:
-    ind = para.index(fi)
-    stop_ind = fi.index('.')
-    ind += stop_ind
-    print(ind)
-print(fiall)
-
-
+pre = DataPreprocess()
+pre.write_csv_file()
