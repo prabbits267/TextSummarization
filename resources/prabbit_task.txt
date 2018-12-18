@@ -2,7 +2,6 @@
 c******a
 f**k
 #BabumoshaiBandookbaazpic.twitter.com/NbFBDWZHSp
-
 2016
 March
 10,000
@@ -16,14 +15,17 @@ Email
 'Victoria
 8:55
 2°C
-2016-17
 403-member
 500-metre
 3,136-kg
 30-33°C
 5.4-carat
 4,000-5,000
+
+
 4.5/5
+
+
 1945-1946
 15,900-?39,100.
 37.5-kilowatt
@@ -103,4 +105,34 @@ b****
 January
 .
 ''
+
 stop words
+
+(HT Photo)
+?unmarried?
+ALSO READ
+10.30 pm
+9.40 am
+1800-180-1817
+August 8 July
+3 August 2017
+Tuesday
+0800 011 4253
+@htshowbiz
+#hashtag
+Golf.com
+@SINON_REBORN
+micrograms 
+lowercase
+http://www.hindustantimes.com/columns/rohit-vats
+£220m
+Thursday 31 August
+?? pic.twitter.com/6INHJi3KCDThe 
+At 7.15 am
+Tuesday morning Wednesday
+support@mcg.gov.in
+
+@context
+
+
+{"@context":"http://schema.org","@type":"Review","author": {"@type":"Person","name":"Rohit Vats","sameAs":"http://www.hindustantimes.com/columns/rohit-vats"},"datePublished":"2017-07-21","description":"MJ should live forever, but this isn?t the right tribute to the moonwalking King Of Pop. Here?s movie review.","inLanguage":"en","itemReviewed": {"@type":"Movie","name":"Munna Michael","image":"http://www.hindustantimes.com/rf/image_size_960x540/HT/p2/2017/07/21/Pictures/_8947c9ea-6dec-11e7-90b5-ba41537c464e.JPG","sameAs":"http://www.imdb.com/title/tt6117702/","datePublished":"2017-07-21","director": {"@type":"Person","name":"Sabbir Khan"},"actor": [{"@type": "Person","name": "Tiger Shroff","sameAs": ""},{"@type": "Person","name": "Nawazuddin Siddiqui","sameAs": ""}]},"publisher": {"@type":"Organization","name":"Hindustan Times","sameAs":"http://www.hindustantimes.com/"},"reviewRating": {"@type":"Rating","worstRating":0.0,"bestRating":5,"ratingValue":"1"}}
