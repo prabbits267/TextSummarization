@@ -4,17 +4,18 @@ from torch.autograd import Variable
 from sources.word_embedding import WordEmbedding
 
 class Encoder(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers=2):
+    def __init__(self, input_size, hidden_size, is_bidirect, num_layers=2):
         super(Encoder, self).__init__()
 
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.num_layers = num_layers
-        self
+        self.is_bidirect = is_bidirect
         self.lstm = nn.LSTM(input_size=input_size,
-                            hidden_size = hidden_size,
+                            hidden_size=hidden_size,
                             num_layers=num_layers,
-                            bidirectional=True,
+                            bidirectional=is_bidirect,
+                            dropout=0.2,
                             batch_first=True)
 
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -40,7 +41,8 @@ class Encoder(nn.Module):
         return self.create_variable(word_embedding)
 
 
-input = 'railways was asked by a court to pay number compensation to a family'
-encoder = Encoder(300, 64)
-a = encoder(input)
-print(a)
+# input = 'railways was asked by a court to pay number compensation to a family'
+# encoder = Encoder(input_size=300, hidden_size=64)
+# encoder.to('cuda:0')
+# a = encoder(input)
+# print(a)
