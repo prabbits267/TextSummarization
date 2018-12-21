@@ -1,8 +1,6 @@
 import torch
 from torch import nn
-from torch.autograd import Variable
-
-from sources.Encoder import Encoder
+import time as t
 from sources.attn import Attn
 from sources.word_embedding import WordEmbedding
 
@@ -28,6 +26,7 @@ class Decoder(nn.Module):
         )
         self.num_dir = 2 if self.lstm.bidirectional else 1
         self.attn = Attn(method, hidden_size * self.num_dir)
+        self.attn = self.attn.to(self.device)
         self.concat = nn.Linear(hidden_size * 2 * self.num_dir, hidden_size)
         self.tanh = nn.Tanh()
         self.out = nn.Linear(hidden_size, output_size)
@@ -42,7 +41,8 @@ class Decoder(nn.Module):
         # (1, 1, 64) , encoder_output (1, <time_step>, 64) ==> (<time_step>)
         attn_weight = self.attn(lstm_output, encoder_output)
         # attn_weight (1, time_step) encoder_output(time_step, hidden_size)  ==> context: (1, hidden_size)
-        attn_weight = attn_weight.unsqueeze(0)
+        # rest_time = t.time()
+        attn_weight = attn_weight
         encoder_output = encoder_output.squeeze(0)
         context = attn_weight.mm(encoder_output)
         # context: (1, hidden_size)  hidden_state (1, 64) ==> (1, 64)
@@ -51,21 +51,19 @@ class Decoder(nn.Module):
         attention_hs = self.tanh(concat_ht)
         output = self.out(attention_hs)
         output = self.softmax(output)
-        return output, (hidden_state, cell_state)
 
-    def create_vaiable(self, tensor):
-        return Variable(tensor.to(self.device))
+        return output, (hidden_state, cell_state)
 
     def make_embedding(self, input):
         word_embed = self.get_vector(input)
         word_embed = torch.from_numpy(word_embed)
         word_embed = word_embed.unsqueeze(0).unsqueeze(0)
-        return self.create_vaiable(word_embed)
+        return word_embed.to(self.device)
 
     def init_hc_state(self):
         hidden_state = torch.zeros([self.num_layers * self.num_dir, 1, self.hidden_size])
         cell_state = hidden_state
-        return self.create_vaiable(cell_state), self.create_vaiable(hidden_state)
+        return cell_state.to(self.device), hidden_state.to(self.device)
 
 # input = 'railways was asked by a court to pay number compensation to a family'
 # encoder = Encoder(input_size=300, hidden_size=128)

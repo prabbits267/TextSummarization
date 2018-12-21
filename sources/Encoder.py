@@ -27,9 +27,6 @@ class Encoder(nn.Module):
         output, (hidden_state, cell_state) = self.lstm(word_embedding, None)
         return output, (hidden_state, cell_state)
 
-    def create_variable(self, tensor):
-        return Variable(tensor.to(self.device))
-
     def make_embedding(self, input):
         tokens = input.split()
         token_len = len(tokens)
@@ -38,7 +35,7 @@ class Encoder(nn.Module):
             vector = self.get_vector(tokens[i])
             word_embedding[i, :] = torch.from_numpy(vector)
         word_embedding = word_embedding.unsqueeze(0)
-        return self.create_variable(word_embedding)
+        return word_embedding.to(self.device)
 
 
 # input = 'railways was asked by a court to pay number compensation to a family'

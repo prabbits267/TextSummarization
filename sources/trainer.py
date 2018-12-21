@@ -1,8 +1,9 @@
 import torch
 from torch import nn, optim
+from torch.autograd import Variable
 from torch.nn import NLLLoss
 from torch.utils.data import DataLoader
-
+import time as t
 from sources.Decoder import Decoder
 from sources.Encoder import Encoder
 from sources.dataset import Seq2SeqDataset
@@ -42,6 +43,7 @@ class Train():
     def step(self, input, target):
         target = target.split()
         target_tensor = self.convert2indx(target)
+
         encoder_output, (hidden_state, cell_state) = self.encoder(input)
 
         target_len = len(target) - 1
@@ -53,8 +55,10 @@ class Train():
         for i in range(target_len):
             output, (hidden_state, cell_state) = self.decoder(decoder_input, (hidden_state, cell_state), encoder_output)
             decoder_output[i] = output.squeeze(0)
-            # output_index[i] = output.topk(1)[1]
+            output_index[i] = output.topk(1)[1]
             decoder_input = target[i+1]
+
+        decoder_output = self.create_variable(decoder_output)
 
         loss = self.loss_function(decoder_output, target_tensor.squeeze(0))
         self.encoder_optim.zero_grad()
@@ -72,9 +76,16 @@ class Train():
         for i, (x_data, y_data) in enumerate(self.dataloader):
             loss, _, output = self.step(x_data[0], y_data[0])
             total_loss += loss
-            if i % 1 == 0:
-                print('  Interation %i , loss %.3f '%(i, loss))
+            if i % 300 == 0:
+                # print(x_data)
+                print('Interation %s , loss %.3f '%(i, loss.cpu().numpy()))
+                # print()
         return total_loss/len(self.dataloader)
+
+
+
+    def create_variable(self, tensor):
+        return Variable(tensor.to(self.device), requires_grad=True)
 
     def train(self):
         for i in range(self.num_epoch):
@@ -91,5 +102,5 @@ class Train():
         return word2ind, ind2word
 
 # input_size, hidden_size, batch_size, learning_rate, method
-train = Train(300, 128, 1, 0.01, 50, 'general')
+train = Train(300, 128, 1, 0.2, 50, 'general')
 train.train()
