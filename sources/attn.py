@@ -62,6 +62,7 @@ class Attn(torch.nn.Module):
         elif self.method == 'concat':
             self.attn = torch.nn.Linear(self.hidden_size * 2, hidden_size)
             self.v = torch.nn.Parameter(torch.FloatTensor(hidden_size))
+        self.softmax = nn.LogSoftmax(dim=1)
 
     def dot_score(self, hidden, encoder_output):
         return torch.sum(hidden * encoder_output, dim=2)
@@ -81,5 +82,5 @@ class Attn(torch.nn.Module):
             attn_energies = self.concat_score(hidden, encoder_outputs)
         elif self.method == 'dot':
             attn_energies = self.dot_score(hidden, encoder_outputs)
-        return F.softmax(attn_energies, dim=0)
+        return self.softmax(attn_energies)
 

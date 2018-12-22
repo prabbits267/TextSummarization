@@ -1,7 +1,7 @@
 import torch
 from torch import nn, optim
 from torch.autograd import Variable
-from torch.nn import NLLLoss
+from torch.nn import NLLLoss, CrossEntropyLoss
 from torch.utils.data import DataLoader
 import time as t
 from sources.Decoder import Decoder
@@ -35,12 +35,18 @@ class Train():
         self.encoder = self.encoder.to(self.device)
         self.decoder = self.decoder.to(self.device)
 
-        self.loss_function = NLLLoss()
+        self.loss_function = CrossEntropyLoss()
 
         self.encoder_optim = optim.Adam(self.encoder.parameters(), lr=self.learning_rate)
         self.decoder_optim = optim.Adam(self.decoder.parameters(), lr=self.learning_rate)
 
     def step(self, input, target):
+        self.encoder.train()
+        self.decoder.train()
+
+        self.encoder_optim.zero_grad()
+        self.decoder_optim.zero_grad()
+
         target = target.split()
         target_tensor = self.convert2indx(target)
 
@@ -61,10 +67,11 @@ class Train():
         decoder_output = self.create_variable(decoder_output)
 
         loss = self.loss_function(decoder_output, target_tensor.squeeze(0))
-        self.encoder_optim.zero_grad()
-        self.decoder_optim.zero_grad()
 
         loss.backward()
+
+        _ = torch.nn.utils.clip_grad_norm_(self.encoder.parameters(), 50.0)
+        _ = torch.nn.utils.clip_grad_norm_(self.decoder.parameters(), 50.0)
 
         self.encoder_optim.step()
         self.decoder_optim.step()
@@ -76,7 +83,7 @@ class Train():
         for i, (x_data, y_data) in enumerate(self.dataloader):
             loss, _, output = self.step(x_data[0], y_data[0])
             total_loss += loss
-            if i % 300 == 0:
+            if i % 1 == 0:
                 # print(x_data)
                 print('Interation %s , loss %.3f '%(i, loss.cpu().numpy()))
                 # print()
